@@ -1,21 +1,20 @@
 #!/bin/bash
 
-cryptsetup luksFormat /dev/sda2
+cryptsetup luksFormat /dev/sdb2
 
-cryptsetup open /dev/sda2 cryptlvm
+cryptsetup open /dev/sdb2 cryptlvm
 
 pvcreate /dev/mapper/cryptlvm 
 
 vgcreate vg1 /dev/mapper/cryptlvm
 
-lvcreate -L 5G vg1 -n root
-lvcreate -L 10G vg1 -n usr
-lvcreate -L 5G vg1 -n opt
-lvcreate -L 2G vg1 -n var
-lvcreate -L 4G vg1 -n swap
+lvcreate -L 10G vg1 -n root
+lvcreate -L 30G vg1 -n usr
+lvcreate -L 5G vg1 -n var
 lvcreate -L 10G vg1 -n home
+lvcreate -L 2G vg1 -n swap
 
-mkfs.fat -F32 /dev/sda1
+mkfs.fat -F32 /dev/sdb1
 mkfs.ext4 /dev/vg1/root
 mkfs.ext4 /dev/vg1/usr
 mkfs.ext4 /dev/vg1/var
@@ -24,11 +23,13 @@ mkswap /dev/vg1/swap
 
 mount /dev/vg1/root /mnt
 mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
+mount /dev/sdb1 /mnt/boot
 mkdir /mnt/usr
 mount /dev/vg1/usr /mnt/usr
 mkdir /mnt/opt
 mount /dev/vg1/opt /mnt/opt
+mkdir /mnt/tmp
+mount /dev/vg1/tmp /mnt/tmp
 mkdir /mnt/var
 mount /dev/vg1/var /mnt/var
 mkdir /mnt/home
@@ -36,4 +37,6 @@ mount /dev/vg1/home /mnt/home
 
 swapon /dev/vg1/swap
 
+pacstrap /mnt base linux linux-firmware vim intel-ucode lvm2
 
+genfstab -U /mnt >> /mnt/etc/fstab

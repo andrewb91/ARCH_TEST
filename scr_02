@@ -1,9 +1,5 @@
 #!/bin/bash
 
-pacstrap /mnt base linux linux-firmware vim intel-ucode lvm2
-
-genfstab -U /mnt >> /mnt/etc/fstab
-
 arch-chroot /mnt
 
 ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
@@ -15,21 +11,11 @@ echo "127.0.0.1 localhost" >> /etc/hosts
 echo "::1       localhost" >> /etc/hosts
 echo "127.0.1.1 mobile.localdomain mobile" >> /etc/hosts
 
-pacman -S grub efibootmgr networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers git reflector bluez bluez-utils pulseaudio-bluetooth cups hplip xdg-utils xdg-users-dirs iptables-nft ipset firewalld openssh tlp acpid xorg lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings firefox arc-gtk-theme arc-icon-theme obs-studio vlc picom cairo openbox thunderbird obconf ttf-dejavu ttf-liberation pcmanfm xfce4-terminal lxappearance lxappearance-obconf nitrogen redshift pcsx2 transmission-gtk blueman youtube-dl samba cmake gnome-mahjongg engrampa pavucontrol gnome-keyring openvpn networkmanager-openvpn gimp okular mesa fuse2 fuse3 ntfs-3g exfat-utils dkms man-db man-pages system-config-printer clamav libreoffice-fresh arandr numlockx gvfs gvfs-smb hplip powertop alsa-utils dnsutils materia-theme adwaita-icon-theme rofi
+
+# You can add xorg to the installation packages, I usually add it at the DE or WM install script
+# You can remove the tlp package if you are installing on a desktop or vm
+
+pacman -S grub efibootmgr networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers git reflector bluez bluez-utils pulseaudio-bluetooth cups hplip xdg-utils xdg-users-dirs iptables-nft ipset firewalld openssh tlp acpid xorg lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings firefox arc-gtk-theme arc-icon-theme obs-studio vlc picom cairo openbox thunderbird obconf ttf-dejavu ttf-liberation pcmanfm xfce4-terminal lxappearance lxappearance-obconf nitrogen redshift pcsx2 transmission-gtk blueman youtube-dl samba cmake gnome-mahjongg engrampa pavucontrol gnome-keyring openvpn networkmanager-openvpn gimp okular mesa fuse2 fuse3 ntfs-3g exfat-utils dkms man-db man-pages system-config-printer clamav libreoffice-fresh arandr numlockx gvfs gvfs-smb hplip powertop alsa-utils dnsutils materia-theme adwaita-icon-theme rofi papirus-icon-theme
+
 
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-
-mkinitcpio -p linux
-
-grub-mkconfig -o /boot/grub/grub.cfg
-
-systemctl enable NetworkManager
-systemctl enable bluetooth
-systemctl enable cups.service
-systemctl enable sshd
-systemctl enable firewalld
-systemctl enable acpid
-
-useradd -m drew
-
-echo "drew ALL=(ALL) ALL" >> /etc/sudoers.d/drew
